@@ -1,0 +1,4 @@
+/bazel-*
+/.vscode
+.mypy_cache
+/*.lock
