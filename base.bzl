@@ -1,0 +1,107 @@
+''' base '''
+
+GREEN = "\033[0;32m"
+RED = "\033[0;31m"
+YELLOW = "\033[0;33m"
+COLOR_END = "\033[0m"
+
+def print_info(msg):
+    # buildifier: disable=print
+    print("\n%s%s%s\n" % (GREEN, msg, COLOR_END))
+
+def print_warn(msg):
+    # buildifier: disable=print
+    print("\n%s%s %s\n" % (YELLOW, msg, COLOR_END))
+
+def print_error(msg):
+    # buildifier: disable=print
+    print("\n%s%s %s\n" % (RED, msg, COLOR_END))
+
+def fail_error(msg):
+    fail("\n%s%s %s\n" % (RED, msg, COLOR_END))
+
+def resolve_labels(repository_ctx, labels):
+    return dict([(label, repository_ctx.path(Label(label))) for label in labels])
+
+def get_ext(repository_ctx):
+    if "windows" in repository_ctx.os.name:
+        return ".exe"
+    else:
+        return ""
+
+def find_python(repository_ctx):
+    path = repository_ctx.which("python3")
+    if path == None:
+        path = repository_ctx.which("python")
+
+    if path == None:
+        fail_error("python not found in PATH!")
+        return ""
+    else:
+        return str(path)
+
+def find_toolchain_path(repository_ctx, toolchain_name):
+    """find toolchain path
+
+    Args:
+      repository_ctx:
+      toolchain_name:
+
+    Returns:
+      toolchain path
+    """
+    path = repository_ctx.which(toolchain_name)
+    if path == None:
+        path = ""
+    else:
+        path = str(path)
+
+    if path == "":
+        fail_error("{} not found in PATH!".format(toolchain_name))
+    else:
+        path = path.replace("/bin/" + toolchain_name + get_ext(repository_ctx), "")
+
+    return path
+
+def _print_aspect_impl(_target, ctx):
+    workspace_root = ctx.label.workspace_root
+    if workspace_root and workspace_root[-1] != "/":
+        workspace_root += "/"
+    package = workspace_root + ctx.label.package
+
+    # print("-----------", package)
+    if hasattr(ctx.rule.attr, "srcs"):
+        for src in ctx.rule.attr.srcs:
+            for f in src.files.to_list():
+                # buildifier: disable=print
+                print("file=" + f.path)
+
+    if hasattr(ctx.rule.attr, "defines"):
+        for d in ctx.rule.attr.defines:
+            # buildifier: disable=print
+            print("define=" + d)
+
+    if hasattr(ctx.rule.attr, "includes"):
+        h = "include="
+        if package:
+            h += package
+
+        for i in ctx.rule.attr.includes:
+            # print("--", i)
+            if i == ".":
+                if package:
+                    # buildifier: disable=print
+                    print(h)
+            elif package:
+                # buildifier: disable=print
+                print(h + "/" + i)
+            else:
+                # buildifier: disable=print
+                print(h + i)
+
+    return []
+
+print_aspect = aspect(
+    implementation = _print_aspect_impl,
+    attr_aspects = ["deps"],
+)
