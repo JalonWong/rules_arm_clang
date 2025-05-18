@@ -1,4 +1,5 @@
 # ARM Clang Rules for Bazel
+Requires bazel v8
 
 ## Getting Started
 First, install armclang compiler, for example by installing Keil MDK.
@@ -18,7 +19,6 @@ git_override(
 
 Add the following to your `.bazelrc` file:
 ```shell
-common --enable_bzlmod
 build --incompatible_enable_cc_toolchain_resolution
 build --platforms=@rules_arm_clang//:cm3 # depends on your platform
 ```
