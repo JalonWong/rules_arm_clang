@@ -1,14 +1,14 @@
 # ARM Clang Rules for Bazel
-Compilation rules for armclang, also known as Arm Compiler 6.
+Compilation rules for `armclang`, also known as Arm Compiler 6.
 
 ## Dependence
 - bazel v8+
-- python3
+- armclang
 
 ## Getting Started
-First, install armclang compiler, for example by installing Keil MDK.
+First, install `armclang` compiler, for example by installing Keil MDK.
 
-Then, add the path of armclang to the environment variable `PATH`, for example `C:\Keil_v5\ARM\ARMCLANG\bin`.
+Then, add the path of `armclang` to the environment variable `PATH`, for example `C:\Keil_v5\ARM\ARMCLANG\bin`.
 Ues `armclang --version` to confirm that the environment variable has taken effect.
 
 Add the following to your `MODULE.bazel` file:

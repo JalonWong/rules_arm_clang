@@ -40,6 +40,36 @@ def find_python(repository_ctx):
     else:
         return str(path)
 
+# def get_armclang_version(repository_ctx, arm_path):
+#     ver_py = repository_ctx.path(Label("@rules_arm_clang//toolchain:arm_clang_version.py"))
+#     python = find_python(repository_ctx)
+#     result = repository_ctx.execute([python, ver_py, arm_path])
+#     if result.return_code == 0:
+#         return result.stdout.strip()
+#     else:
+#         return ""
+
+def get_armclang_version(repository_ctx, arm_path):
+    armclang = "/".join([arm_path, "bin", "armclang"])
+    result = repository_ctx.execute([armclang, "--version"])
+
+    if result.return_code == 0:
+        output = result.stdout.strip().lower()
+        n = output.find("arm compiler")
+        if n < 0:
+            return ""
+
+        version = ""
+        for i in range(n, len(output)):
+            c = output[i]
+            if (c >= '0' and c <= '9') or c == '.':
+                version += c
+            elif len(version) > 0:
+                break
+        return version
+    else:
+        return ""
+
 def find_toolchain_path(repository_ctx, toolchain_name):
     """find toolchain path
 

@@ -2,7 +2,7 @@
 
 load("@rules_arm_clang//:base.bzl",
     "resolve_labels",
-    "find_python",
+    "get_armclang_version",
     "find_toolchain_path",
     "print_info",
     "print_warn",
@@ -23,14 +23,9 @@ def _impl(repository_ctx):
     arm_path = find_toolchain_path(repository_ctx, "armclang")
 
     optional_cflags = []
-    ver_py = repository_ctx.path(Label("@rules_arm_clang//toolchain:arm_clang_version.py"))
+    version = get_armclang_version(repository_ctx, arm_path)
 
-    python = find_python(repository_ctx)
-    # print([python, ver_py, arm_path])
-    result = repository_ctx.execute([python, ver_py, arm_path])
-
-    if result.return_code == 0:
-        version = result.stdout.strip()
+    if version:
         print_info("ARM Clang version: {}".format(version))
         vl = version.split(".")
         version_int = int(vl[0]) * 1000 + int(vl[1])
