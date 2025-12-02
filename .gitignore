@@ -3,3 +3,5 @@
 .mypy_cache
 /*.lock
 /release.md
+/bazel-registry
+/*.zip
