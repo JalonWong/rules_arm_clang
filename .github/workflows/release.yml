@@ -26,7 +26,7 @@ jobs:
 
   publish:
     needs: release
-    uses: JalonWong/bazel-registry/.github/workflows/publish.yml@main
+    uses: JalonWong/bazel-registry/.github/workflows/publish.yml@v1
     with:
       tag_name: ${{ github.ref_name }}
     secrets:
